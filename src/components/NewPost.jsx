@@ -24,7 +24,7 @@ const NewPost = (props) => {
 
 	const getCat = async () => {
 		const response = await fetch(
-			'http://gift-away-backend.herokuapp.com/api/v1/categories',
+			'https://gift-away-backend.herokuapp.com/api/v1/categories',
 			{
 				method: 'GET',
 				headers: {
@@ -74,7 +74,7 @@ const NewPost = (props) => {
 			body: JSON.stringify(data)
 		};
 
-		fetch('http://gift-away-backend.herokuapp.com/api/v1/posts', configObject)
+		fetch('https://gift-away-backend.herokuapp.com/api/v1/posts', configObject)
 			.then((response) => response.json())
 			.then((object) => {
 				if (object) {
@@ -89,7 +89,7 @@ const NewPost = (props) => {
 		const token = localStorage.getItem('token');
 		const upload = new DirectUpload(
 			file,
-			'http://gift-away-backend.herokuapp.com/rails/active_storage/direct_uploads'
+			'https://gift-away-backend.herokuapp.com/rails/active_storage/direct_uploads'
 		);
 		upload.create((error, blob) => {
 			if (error) {
@@ -97,16 +97,19 @@ const NewPost = (props) => {
 			} else {
 				console.log("there's no error");
 
-				fetch(`http://gift-away-backend.herokuapp.com/api/v1/posts/${postId}`, {
-					method: 'PUT',
-					// mode: 'cors',
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-						Authorization: `Bearer ${token}`
-					},
-					body: JSON.stringify({ image: blob.signed_id })
-				})
+				fetch(
+					`https://gift-away-backend.herokuapp.com/api/v1/posts/${postId}`,
+					{
+						method: 'PUT',
+						// mode: 'cors',
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+							Authorization: `Bearer ${token}`
+						},
+						body: JSON.stringify({ image: blob.signed_id })
+					}
+				)
 					.then((response) => response.json())
 					.then((result) => dispatch(fetchPosts('manage', user.id)));
 			}
