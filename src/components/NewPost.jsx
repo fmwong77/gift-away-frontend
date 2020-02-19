@@ -74,7 +74,7 @@ const NewPost = (props) => {
 			body: JSON.stringify(data)
 		};
 
-		fetch('http://gift-away-backend.herokuapp.com/api/v1/posts/', configObject)
+		fetch('http://gift-away-backend.herokuapp.com/api/v1/posts', configObject)
 			.then((response) => response.json())
 			.then((object) => {
 				if (object) {
