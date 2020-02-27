@@ -5,26 +5,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { allPosts } from '../actions';
 import ItemCard from './ItemCard';
 import Search from './search.jsx';
-
 import { Message } from 'semantic-ui-react';
 
-//create your forceUpdate hook
-// const useForceUpdate = () => {
-// 	const [value, setValue] = useState(0); // integer state
-// 	console.log('forceUpdate');
-// 	return () => setValue((value) => ++value); // update the state to force render
-// };
-
 const PostBrowser = (props) => {
-	// const forceUpdate = useForceUpdate();
 	const dispatch = useDispatch();
 	const posts = useSelector((state) => state.post);
 	const user = useSelector((state) => state.user);
 	const filterInfo = useSelector((state) => state.filterInfo);
 
 	useEffect(() => {
-		// getPosts();
-		// dispatch(fetchPosts(props.type, user.id));
 		console.log('useEffect');
 
 		const token = localStorage.getItem('token');
@@ -93,6 +82,7 @@ const PostBrowser = (props) => {
 				) : null}
 			</div>
 			<div className="ui relaxed five column grid">
+<<<<<<< HEAD
 				{/* <div className="ui container four column grid"> */}
 				{/* <Grid.Row columns={4}>
 				<Grid.Column> */}
@@ -101,6 +91,11 @@ const PostBrowser = (props) => {
 					: null}
 				{/* </Grid.Column>
 			</Grid.Row> */}
+=======
+				{posts.map((post) => (
+					<ItemCard post={post} postType={props.type} />
+				))}
+>>>>>>> 204b12efeaf5262305959a158eb4b88d53638dc1
 			</div>
 		</div>
 	);

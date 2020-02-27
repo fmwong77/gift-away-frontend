@@ -17,7 +17,6 @@ import { DirectUpload } from 'activestorage';
 const PostDetails = (props) => {
 	const dispatch = useDispatch();
 	const categories = useSelector((state) => state.categories);
-	// const post = useSelector((state) => state.post);
 	const info = useSelector((state) => state.postInfo);
 	const user = useSelector((state) => state.user);
 	const coordinate = useSelector((state) => state.map);
@@ -94,7 +93,6 @@ const PostDetails = (props) => {
 		const description = e.target.description.value;
 
 		if (title.length === 0 || description.length === 0) {
-			// swal('Oops!', 'Title or description cannot be blank...', 'error');
 			Swal.fire({
 				title: 'Oops!',
 				text: 'Title or description cannot be blank...',
@@ -236,13 +234,11 @@ const PostDetails = (props) => {
 							multiple
 							name="image_files"
 							onChange={(e) => handleOnChange(e)}
-							// defaultValue={post[0].image.name}
 						/>
 
 						<div style={{ margin: '100px' }}>
 							<label>Pick-up Location</label>
 							<Map
-								// google={this.props.google}
 								center={{
 									lat: parseFloat(latitude),
 									lng: parseFloat(longitude)
