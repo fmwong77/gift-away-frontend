@@ -30,7 +30,7 @@ const PostBrowser = (props) => {
 		const token = localStorage.getItem('token');
 
 		fetch(
-			`https://gift-away-backend.herokuapp.com/api/v1/posts?type=${props.type}&user_id=${user.id}`,
+			`http://localhost:3000/api/v1/posts?type=${props.type}&user_id=${user.id}`,
 			{
 				method: 'GET',
 				headers: {
@@ -53,6 +53,8 @@ const PostBrowser = (props) => {
 				}
 			});
 	}, []);
+
+	console.log(posts);
 
 	return (
 		<div>
@@ -94,9 +96,9 @@ const PostBrowser = (props) => {
 				{/* <div className="ui container four column grid"> */}
 				{/* <Grid.Row columns={4}>
 				<Grid.Column> */}
-				{posts.map((post) => (
-					<ItemCard post={post} postType={props.type} />
-				))}
+				{posts !== undefined && null
+					? posts.map((post) => <ItemCard post={post} postType={props.type} />)
+					: null}
 				{/* </Grid.Column>
 			</Grid.Row> */}
 			</div>

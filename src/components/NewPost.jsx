@@ -7,7 +7,7 @@ import { getCategories, postInfo, fetchPosts } from '../actions';
 import Map from './Map';
 import Swal from 'sweetalert2';
 import { withRouter } from 'react-router-dom';
-
+import axios from 'axios';
 import { DirectUpload } from 'activestorage';
 
 const NewPost = (props) => {
@@ -23,15 +23,12 @@ const NewPost = (props) => {
 	}, []);
 
 	const getCat = async () => {
-		const response = await fetch(
-			'https://gift-away-backend.herokuapp.com/api/v1/categories',
-			{
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
+		const response = await fetch('http://localhost:3000/api/v1/categories', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${token}`
 			}
-		);
+		});
 		const data = await response.json();
 
 		dispatch(getCategories(data));
@@ -51,70 +48,75 @@ const NewPost = (props) => {
 			});
 		}
 		// debugger;
-		let data = {
-			title: title,
-			description: description,
-			category_id: info.category_id,
-			user_id: user.id,
-			latitude: coordinate.lat,
-			longitude: coordinate.lng,
-			image: info.image
-		};
+		// let data = {
+		// 	title: title,
+		// 	description: description,
+		// 	category_id: info.category_id,
+		// 	user_id: user.id,
+		// 	latitude: coordinate.lat,
+		// 	longitude: coordinate.lng,
+		// 	image: info.image
+		// };
+
+		let fileData = new FormData();
+		fileData.append('title', title);
+		fileData.append('description', description);
+		fileData.append('category_id', info.category_id);
+		fileData.append('user_id', user.id);
+		fileData.append('latitude', coordinate.lat);
+		fileData.append('longitude', coordinate.lng);
+		fileData.append('image', info.image);
 
 		const token = localStorage.getItem('token');
 
-		const configObject = {
-			method: 'POST',
-			mode: 'cors',
+		axios({
+			method: 'post',
+			url: 'http://localhost:3000/api/v1/posts.json',
+			data: fileData,
 			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
+				'Content-Type': 'multipart/form-data',
+				// Accept: 'application/json',
+				// 'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`
-			},
-			body: JSON.stringify(data)
-		};
-
-		fetch('https://gift-away-backend.herokuapp.com/api/v1/posts', configObject)
-			.then((response) => response.json())
-			.then((object) => {
-				if (object) {
-					uploadFile(info.image, object.id);
-				}
+			}
+			// body: JSON.stringify(fileData)
+		})
+			.then((resp) => {
+				console.log(resp);
+			})
+			.catch((err) => {
+				console.log(err);
 			});
-
 		props.history.push('/manage-my-post');
 	};
 
-	const uploadFile = (file, postId) => {
-		const token = localStorage.getItem('token');
-		const upload = new DirectUpload(
-			file,
-			'https://gift-away-backend.herokuapp.com/rails/active_storage/direct_uploads'
-		);
-		upload.create((error, blob) => {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("there's no error");
+	// const uploadFile = (file, postId) => {
+	// 	const token = localStorage.getItem('token');
+	// 	const upload = new DirectUpload(
+	// 		file,
+	// 		'http://localhost:3000/rails/active_storage/direct_uploads'
+	// 	);
+	// 	upload.create((error, blob) => {
+	// 		if (error) {
+	// 			console.log(error);
+	// 		} else {
+	// 			console.log("there's no error");
 
-				fetch(
-					`https://gift-away-backend.herokuapp.com/api/v1/posts/${postId}`,
-					{
-						method: 'PUT',
-						// mode: 'cors',
-						headers: {
-							'Content-Type': 'application/json',
-							Accept: 'application/json',
-							Authorization: `Bearer ${token}`
-						},
-						body: JSON.stringify({ image: blob.signed_id })
-					}
-				)
-					.then((response) => response.json())
-					.then((result) => dispatch(fetchPosts('manage', user.id)));
-			}
-		});
-	};
+	// 			fetch(`http://localhost:3000/api/v1/posts/${postId}`, {
+	// 				method: 'PUT',
+	// 				// mode: 'cors',
+	// 				headers: {
+	// 					'Content-Type': 'application/json',
+	// 					Accept: 'application/json',
+	// 					Authorization: `Bearer ${token}`
+	// 				},
+	// 				body: JSON.stringify({ image: blob.signed_id })
+	// 			})
+	// 				.then((response) => response.json())
+	// 				.then((result) => dispatch(fetchPosts('manage', user.id)));
+	// 		}
+	// 	});
+	// };
 
 	const handleOnChange = (e) => {
 		if (e.target.type === 'file') {
