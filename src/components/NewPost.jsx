@@ -78,7 +78,8 @@ const NewPost = (props) => {
 			.then((response) => response.json())
 			.then((object) => {
 				if (object) {
-					// uploadFile(info.image, object.id);
+					console.log(object);
+					uploadFile(info.image, object.id);
 				}
 			});
 
@@ -159,6 +160,7 @@ const NewPost = (props) => {
 							}
 						/>
 						<label>Files</label>
+
 						<input
 							type="file"
 							multiple

@@ -1,14 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { Card, Icon, Image, Grid } from 'semantic-ui-react';
-import StackGrid from 'react-stack-grid';
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const ItemCardFront = (props) => {
 	// const dispatch = useDispatch();
 	const { id, title, description, image } = props.post;
-	console.log(image);
+	// console.log(image.url);
 
 	// useEffect(() => {
 	// 	forceUpdate();
