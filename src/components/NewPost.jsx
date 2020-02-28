@@ -78,7 +78,7 @@ const NewPost = (props) => {
 			.then((response) => response.json())
 			.then((object) => {
 				if (object) {
-					uploadFile(info.image, object.id);
+					// uploadFile(info.image, object.id);
 				}
 			});
 
