@@ -7,18 +7,17 @@ import {
 	getCategories,
 	postInfo,
 	singlePost,
-	saveCoordinate,
-	fetchPosts
+	saveCoordinate
 } from '../actions';
 import Map from './Map';
 import Swal from 'sweetalert2';
-import { DirectUpload } from 'activestorage';
+import ReactS3 from 'react-s3';
 
 const PostDetails = (props) => {
 	const dispatch = useDispatch();
 	const categories = useSelector((state) => state.categories);
 	const info = useSelector((state) => state.postInfo);
-	const user = useSelector((state) => state.user);
+	// const user = useSelector((state) => state.user);
 	const coordinate = useSelector((state) => state.map);
 	const token = localStorage.getItem('token');
 
@@ -28,7 +27,7 @@ const PostDetails = (props) => {
 	const [latitude, setLatitude] = useState(30.5103116);
 	const [longitude, setLongitude] = useState(-97.837184);
 	const [category, setCategory] = useState('');
-	const [image, setImage] = useState('');
+	const [image_url, setImage] = useState('');
 
 	useEffect(() => {
 		getCat();
@@ -57,13 +56,13 @@ const PostDetails = (props) => {
 		setLatitude(data.latitude);
 		setLongitude(data.longitude);
 		dispatch(saveCoordinate({ lat: data.latitude, lng: data.longitude }));
-		setImage(data.image.url);
+		setImage(data.image_url);
 		setCategory(data.category.category);
 
 		dispatch(
 			postInfo({
-				category_id: data.category_id,
-				image: data.image
+				category_id: data.category_id
+				// image: data.image
 			})
 		);
 
@@ -101,12 +100,30 @@ const PostDetails = (props) => {
 			});
 		}
 
-		updatePost(title, description);
-		uploadFile(title, description);
-		props.history.push('/manage-my-post');
+		if (info.image.size > 250000) {
+			Swal.fire({
+				title: 'Oops!',
+				text: 'Image file size is too big to upload...',
+				icon: 'error',
+				confirmButtonText: 'Ok'
+			});
+		}
+
+		const config = {
+			bucketName: 'gift-away',
+			region: 'us-east-2',
+			accessKeyId: 'AKIAIXR2WWHDUCYKIYDQ',
+			secretAccessKey: '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'
+		};
+
+		ReactS3.uploadFile(info.image, config).then((data) => {
+			console.log(data);
+			updatePost(title, description, data.location);
+			props.history.push('/manage-my-post');
+		});
 	};
 
-	const updatePost = (title, description) => {
+	const updatePost = (title, description, imageUrl) => {
 		const token = localStorage.getItem('token');
 
 		let data = {
@@ -115,7 +132,7 @@ const PostDetails = (props) => {
 			category_id: info.category_id,
 			latitude: coordinate.lat,
 			longitude: coordinate.lng,
-			image: info.image
+			image_url: imageUrl
 		};
 
 		fetch(`http://localhost:3000/api/v1/posts/${id}?info=post`, {
@@ -131,37 +148,9 @@ const PostDetails = (props) => {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result) {
-					uploadFile();
+					props.history.push('/manage-my-post');
 				}
 			});
-	};
-
-	const uploadFile = (title, description) => {
-		const token = localStorage.getItem('token');
-		const upload = new DirectUpload(
-			info.image,
-			'http://localhost:3000/rails/active_storage/direct_uploads'
-		);
-		upload.create((error, blob) => {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("there's no error");
-
-				fetch(`http://localhost:3000/api/v1/posts/${id}`, {
-					method: 'PUT',
-					// mode: 'cors',
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-						Authorization: `Bearer ${token}`
-					},
-					body: JSON.stringify({ image: blob.signed_id })
-				})
-					.then((response) => response.json())
-					.then((result) => dispatch(fetchPosts('manage', user.id)));
-			}
-		});
 	};
 
 	const handleOnChange = (e) => {
@@ -169,10 +158,6 @@ const PostDetails = (props) => {
 			dispatch(postInfo({ image: e.target.files[0] }));
 		}
 	};
-
-	console.log(coordinate.lat);
-
-	console.log(coordinate.lng);
 
 	return (
 		<div className="App">
@@ -222,7 +207,7 @@ const PostDetails = (props) => {
 						<label>Files</label>
 						<div>
 							<Card>
-								<Image src={image} wrapped ui={false} />
+								<Image src={image_url} wrapped ui={false} />
 							</Card>
 							<Message
 								attached

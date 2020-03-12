@@ -3,12 +3,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form, Grid } from 'semantic-ui-react';
-import { getCategories, postInfo, fetchPosts } from '../actions';
+import { getCategories, postInfo } from '../actions';
 import Map from './Map';
 import Swal from 'sweetalert2';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
-import { DirectUpload } from 'activestorage';
+import ReactS3 from 'react-s3';
 
 const NewPost = (props) => {
 	const dispatch = useDispatch();
@@ -21,6 +20,13 @@ const NewPost = (props) => {
 	useEffect(() => {
 		getCat();
 	}, []);
+
+	const config = {
+		bucketName: 'gift-away',
+		region: 'us-east-2',
+		accessKeyId: 'AKIAIXR2WWHDUCYKIYDQ',
+		secretAccessKey: '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'
+	};
 
 	const getCat = async () => {
 		const response = await fetch('http://localhost:3000/api/v1/categories', {
@@ -48,75 +54,55 @@ const NewPost = (props) => {
 			});
 		}
 		// debugger;
-		// let data = {
-		// 	title: title,
-		// 	description: description,
-		// 	category_id: info.category_id,
-		// 	user_id: user.id,
-		// 	latitude: coordinate.lat,
-		// 	longitude: coordinate.lng,
-		// 	image: info.image
-		// };
 
-		let fileData = new FormData();
-		fileData.append('title', title);
-		fileData.append('description', description);
-		fileData.append('category_id', info.category_id);
-		fileData.append('user_id', user.id);
-		fileData.append('latitude', coordinate.lat);
-		fileData.append('longitude', coordinate.lng);
-		fileData.append('image', info.image);
-
-		const token = localStorage.getItem('token');
-
-		axios({
-			method: 'post',
-			url: 'http://localhost:3000/api/v1/posts.json',
-			data: fileData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
-				// Accept: 'application/json',
-				// 'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-			// body: JSON.stringify(fileData)
-		})
-			.then((resp) => {
-				console.log(resp);
-			})
-			.catch((err) => {
-				console.log(err);
+		console.log(info.image.size);
+		if (info.image.size > 250000) {
+			Swal.fire({
+				title: 'Oops!',
+				text: 'Image file size is too big to upload...',
+				icon: 'error',
+				confirmButtonText: 'Ok'
 			});
-		props.history.push('/manage-my-post');
+		}
+
+		ReactS3.uploadFile(info.image, config)
+			.then((data) => {
+				console.log(data);
+
+				let postData = {
+					title: title,
+					description: description,
+					category_id: info.category_id,
+					user_id: user.id,
+					latitude: coordinate.lat,
+					longitude: coordinate.lng,
+					image_url: data.location
+				};
+
+				const token = localStorage.getItem('token');
+
+				const configObject = {
+					method: 'POST',
+					mode: 'cors',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`
+					},
+					body: JSON.stringify(postData)
+				};
+				fetch('http://localhost:3000/api/v1/posts/', configObject)
+					.then((response) => response.json())
+					.then((object) => {
+						if (object) {
+							console.log(object);
+						}
+					});
+				props.history.push('/manage-my-post');
+			})
+
+			.catch((err) => console.log(err));
 	};
-
-	// const uploadFile = (file, postId) => {
-	// 	const token = localStorage.getItem('token');
-	// 	const upload = new DirectUpload(
-	// 		file,
-	// 		'http://localhost:3000/rails/active_storage/direct_uploads'
-	// 	);
-	// 	upload.create((error, blob) => {
-	// 		if (error) {
-	// 			console.log(error);
-	// 		} else {
-	// 			console.log("there's no error");
-
-	// 			fetch(`http://localhost:3000/api/v1/posts/${postId}`, {
-	// 				method: 'PUT',
-	// 				// mode: 'cors',
-	// 				headers: {
-	// 					'Content-Type': 'application/json',
-	// 					Accept: 'application/json',
-	// 					Authorization: `Bearer ${token}`
-	// 				},
-	// 				body: JSON.stringify({ image: blob.signed_id })
-	// 			})
-	// 				.then((response) => response.json())
-	// 				.then((result) => dispatch(fetchPosts('manage', user.id)));
-	// 		}
-	// 	});
-	// };
 
 	const handleOnChange = (e) => {
 		if (e.target.type === 'file') {
