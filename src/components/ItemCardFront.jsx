@@ -4,17 +4,11 @@ import { Card, Icon, Image, Grid } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 const ItemCardFront = (props) => {
-	const { id, title, description, image } = props.post;
+	const { id, title, description, image_url } = props.post;
 
 	return (
 		<Card key={id}>
-			{image === null || image === undefined ? (
-				''
-			) : (
-				// <Image.Group size="small">
-				<Image src={image.url} wrapped ui={false} />
-				// </Image.Group>
-			)}
+			<Image src={image_url} wrapped ui={false} />
 
 			<Card.Content textAlign="left">
 				<Card.Header>{title}</Card.Header>
