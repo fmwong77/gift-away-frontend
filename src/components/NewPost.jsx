@@ -147,6 +147,7 @@ const NewPost = (props) => {
 							}
 						/>
 						<label>Files</label>
+
 						<input
 							type="file"
 							multiple

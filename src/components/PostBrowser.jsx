@@ -82,14 +82,9 @@ const PostBrowser = (props) => {
 				) : null}
 			</div>
 			<div className="ui relaxed five column grid">
-				{/* <div className="ui container four column grid"> */}
-				{/* <Grid.Row columns={4}>
-				<Grid.Column> */}
-				{posts.map((post) => (
-					<ItemCard post={post} postType={props.type} />
-				))}
-				{/* </Grid.Column>
-			</Grid.Row> */}
+				{posts === undefined || posts === null
+					? null
+					: posts.map((post) => <ItemCard post={post} postType={props.type} />)}
 			</div>
 		</div>
 	);
