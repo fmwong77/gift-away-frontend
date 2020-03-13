@@ -29,7 +29,7 @@ const NewPost = (props) => {
 	};
 
 	const getCat = async () => {
-		const response = await fetch('http://localhost:3000/api/v1/categories', {
+		const response = await fetch('https://gift-away-backend.herokuapp.com/api/v1/categories', {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${token}`
@@ -91,7 +91,7 @@ const NewPost = (props) => {
 					},
 					body: JSON.stringify(postData)
 				};
-				fetch('http://localhost:3000/api/v1/posts/', configObject)
+				fetch('https://gift-away-backend.herokuapp.com/api/v1/posts/', configObject)
 					.then((response) => response.json())
 					.then((object) => {
 						if (object) {

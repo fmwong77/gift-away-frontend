@@ -53,7 +53,10 @@ function SignUp(props) {
 				body: JSON.stringify(data)
 			};
 
-			fetch('http://localhost:3000/api/v1/users/', configObject)
+			fetch(
+				'https://gift-away-backend.herokuapp.com/api/v1/users/',
+				configObject
+			)
 				.then((response) => response.json())
 				.then((object) => {
 					if (object.user) {
