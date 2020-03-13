@@ -115,8 +115,8 @@ const PostDetails = (props) => {
 		const config = {
 			bucketName: 'gift-away',
 			region: 'us-east-2',
-			accessKeyId: 'AKIAIXR2WWHDUCYKIYDQ',
-			secretAccessKey: '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'
+			accessKeyId: '',
+			secretAccessKey: ''
 		};
 
 		ReactS3.uploadFile(info.image, config).then((data) => {
