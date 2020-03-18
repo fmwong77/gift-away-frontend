@@ -236,8 +236,8 @@ class Map extends Component {
 					google={this.props.google}
 					defaultZoom={this.props.zoom}
 					defaultCenter={{
-						lat: this.state.mapPosition.lat,
-						lng: this.state.mapPosition.lng
+						lat: this.props.center.lat,
+						lng: this.props.center.lng
 					}}
 				>
 					{/* InfoWindow on top of marker */}
@@ -285,7 +285,7 @@ class Map extends Component {
 		if (this.props.center.lat !== undefined) {
 			map = (
 				<div>
-					<div>{this.state.mapPosition.lat}</div>
+					<div>{this.props.center.lat}</div>
 					<div>{this.state.mapPosition.lng}</div>
 
 					<AsyncMap
