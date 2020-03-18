@@ -235,10 +235,10 @@ class Map extends Component {
 				<GoogleMap
 					google={this.props.google}
 					defaultZoom={this.props.zoom}
-					defaultCenter={{
-						lat: this.state.mapPosition.lat,
-						lng: this.state.mapPosition.lng
-					}}
+					// defaultCenter={{
+					// 	lat: this.state.mapPosition.lat,
+					// 	lng: this.state.mapPosition.lng
+					// }}
 				>
 					{/* InfoWindow on top of marker */}
 					<InfoWindow
