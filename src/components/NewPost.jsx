@@ -29,12 +29,15 @@ const NewPost = (props) => {
 	};
 
 	const getCat = async () => {
-		const response = await fetch('https://gift-away-backend.herokuapp.com/api/v1/categories', {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token}`
+		const response = await fetch(
+			'https://gift-away-backend.herokuapp.com/api/v1/categories',
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
 			}
-		});
+		);
 		const data = await response.json();
 
 		dispatch(getCategories(data));
@@ -91,7 +94,10 @@ const NewPost = (props) => {
 					},
 					body: JSON.stringify(postData)
 				};
-				fetch('https://gift-away-backend.herokuapp.com/api/v1/posts/', configObject)
+				fetch(
+					'https://gift-away-backend.herokuapp.com/api/v1/posts/',
+					configObject
+				)
 					.then((response) => response.json())
 					.then((object) => {
 						if (object) {

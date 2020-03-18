@@ -261,8 +261,8 @@ class Map extends Component {
 						draggable={true}
 						onDragEnd={this.onMarkerDragEnd}
 						position={{
-							lat: this.state.markerPosition.lat,
-							lng: this.state.markerPosition.lng
+							lat: this.state.mapPosition.lat,
+							lng: this.state.mapPosition.lng
 						}}
 					/>
 					<Marker />
@@ -285,7 +285,8 @@ class Map extends Component {
 		if (this.props.center.lat !== undefined) {
 			map = (
 				<div>
-					<div></div>
+					<div>{this.state.mapPosition.lat}</div>
+					<div>{this.state.mapPosition.lng}</div>
 
 					<AsyncMap
 						googleMapURL={`https://maps.googleapis.com/maps/api/js?key=AIzaSyCPeKDCa4hqQkYjzHqRY-vFXc6xeITXxVI&libraries=places`}
