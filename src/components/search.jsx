@@ -33,12 +33,13 @@ const Search = (props) => {
 			{
 				method: 'GET',
 				headers: {
-					Authorization: `Bearer ${token}`
-				}
+					Authorization: `Bearer ${token}`,
+				},
 			}
 		)
 			.then((response) => response.json())
 			.then((data) => {
+				console.log(category.category_id);
 				if (
 					(searchTerm.length === 0 &&
 						category.category_id === 0 &&
@@ -51,24 +52,29 @@ const Search = (props) => {
 					(category.category_id !== 0)
 				) {
 					filteredArray = data
-						.filter((p) => p.title.includes(searchTerm))
+						.filter((p) =>
+							p.title.toLowerCase().includes(searchTerm.toLowerCase())
+						)
 						.filter((cat) => cat.category_id === category.category_id);
 					dispatch(allPosts(filteredArray));
 				} else {
-					filteredArray = data.filter((p) => p.title.includes(searchTerm));
+					filteredArray = data.filter((p) =>
+						p.title.toLowerCase().includes(searchTerm.toLowerCase())
+					);
 					dispatch(allPosts(filteredArray));
 				}
 			});
 	};
 
 	const renderCategory = () => {
-		let categoriesArr = [{ key: 0, text: 'All Category', value: 0 }];
+		let categoriesArr = [{ key: 0, text: 'Select a Category', value: 0 }];
+		// let categoriesArr = [];
 
 		let arr = categories.categories.map((cat) => {
 			return {
 				key: cat.id,
 				text: cat.category,
-				value: cat.id
+				value: cat.id,
 			};
 		});
 
@@ -92,7 +98,7 @@ const Search = (props) => {
 								dispatch(
 									filterInfo({
 										category_id: value,
-										category: text
+										category: text,
 									})
 								);
 							}}
